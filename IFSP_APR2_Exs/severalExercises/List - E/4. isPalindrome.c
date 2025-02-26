@@ -29,7 +29,8 @@ int is_palindrome(char string[]){
 int main(int argc, char const *argv[]){
     char string[64];
     fgets(string, sizeof(string), stdin);
-    string[strcspn(string, "\n")] = '\0';
+    int tamanho = strlen(string);
+    string[tamanho - 1] = '\0';
     printf("%d", is_palindrome(string));
     return 0;
 }
