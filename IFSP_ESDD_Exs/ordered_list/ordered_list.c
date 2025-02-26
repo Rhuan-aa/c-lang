@@ -20,7 +20,7 @@ int size(t_ordered_list* list)
 }
 
 int is_full(t_ordered_list* list){
-    return size(list) < list->max;
+    return size(list) == list->max;
 }
 
 int is_empty(t_ordered_list* list)
@@ -133,7 +133,7 @@ t_ordered_list* merge(t_ordered_list* l1, t_ordered_list* l2){
     if (is_empty(l1) && !is_empty(l2)) return l2;
     if (is_empty(l2) && !is_empty(l1)) return l1;
 
-    t_ordered_list* l3 = create_ordered_list(size(l1) + size(l2));
+    t_ordered_list* l3 = create_ordered_list(l1->max + l2->max);
     int k1 = 0;
     int k2 = 0;
 
