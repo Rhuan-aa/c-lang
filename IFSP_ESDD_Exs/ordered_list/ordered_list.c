@@ -128,42 +128,23 @@ void print_ordered_list(t_ordered_list* list){
     printf("\n");
 }
 
-t_ordered_list* merge(t_ordered_list* l1, t_ordered_list* l2){
-    if (is_empty(l1) && is_empty(l2)) return NULL;
-    if (is_empty(l1) && !is_empty(l2)) return l2;
-    if (is_empty(l2) && !is_empty(l1)) return l1;
-
-    t_ordered_list* l3 = create_ordered_list(l1->max + l2->max);
-    int k1 = 0;
-    int k2 = 0;
-
-    for (int i = 0; i < l3->max; i++)
-    {
-        if (k1 == size(l1))
-        {
-            l3->items[i] = l2->items[k2];
-            k2++;
-        } 
-
-        else if (k2 == size(l2))
-        {
-            l3->items[i] = l1->items[k1];
-            k1++;
-        } 
-
-        else if(l1->items[k1] < l2->items[k2])
-        {
-            l3->items[i] = l1->items[k1];
-            k1++;
-        } 
-
-        else 
-        {
-            l3->items[i] = l2->items[k2];
-            k2++;
+t_ordered_list* merge(t_ordered_list* list1, t_ordered_list* list2){
+    if (is_empty(list1) && is_empty(list2)) return NULL;
+    if (is_empty(list1) && !is_empty(list2)) return list2;
+    if (is_empty(list2) && !is_empty(list1)) return list1;
+    t_ordered_list* list3 = create_ordered_list(size(list1) + size(list2));
+    int index1 = 0;
+    int index2 = 0;
+    int index3 = 0;
+    while(index1 < size(list1) || index2 < size(list2)){
+        if ((index1 < size(list1) && index2 == size(list2)) || list1->items[index1] < list2->items[index2]){
+            list3->items[index3] = list1->items[index1];
+            index1++;
+        } else if (index2 < size(list2)){
+            list3->items[index3] = list1->items[index1];
+            index1++;
         }
-
-        l3->n++;
+        index3++;
     }
-    return l3;    
+    return list3;    
 }
