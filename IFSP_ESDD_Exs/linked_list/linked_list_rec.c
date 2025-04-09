@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 typedef struct _node {
     int item;
@@ -54,20 +55,20 @@ t_node* create_node(int value) {
     return new_node;
 }
 
-void insert_ordered(t_linked_list* list, t_node* node, int item) {
-    if (item < list->head->item) {
-        t_node* new_node = create_node(item);
-        new_node->next = list->head;
-        list->head = new_node;
-        return;
-    } else if (item < node->next->item) {
-        t_node* new_node = create_node(item);
-        new_node->next = node->next;
-        node->next = new_node;
-        return;
+t_node* insert_ordered(t_node* prev, t_node* node, int value){
+    if (node == NULL) {
+        return NULL;
     }
     
-    insert_ordered(list, node->next, item);
+    if (value < node->item) {
+        t_node* new_node = create_node(value);
+        new_node->next = prev->next;
+        prev->next = new_node;
+        return insert_ordered(prev, new_node, INT_MAX);
+    }
+    
+    node->next = insert_ordered(node, node->next, value);
+    return node;
 }
 
 void can_insert(t_linked_list* list, int item) {
@@ -75,7 +76,7 @@ void can_insert(t_linked_list* list, int item) {
         append(list, item);
         return;
     } 
-    insert_ordered(list, list->head, item);
+    insert_ordered(NULL, list->head, item);
 }
 
 void remove_by_value(t_linked_list* list, t_node* node, int value) {
@@ -292,22 +293,54 @@ int is_palindrome(t_linked_list* list) {
     return check_palindrome(list->head, reversed_list->head);
 }
 
+
+// Placeholder enquanto não faço sort recursivo
+t_node* sorted_insert(t_node* sorted, t_node* node) {
+    if (sorted == NULL || node->item < sorted->item) {
+        node->next = sorted;
+        return node;
+    }
+    
+    t_node* current = sorted;
+    while (current->next != NULL && current->next->item < node->item) {
+        current = current->next;
+    }
+
+    node->next = current->next;
+    current->next = node;
+    return sorted;
+}
+
+void insertion_sort(t_linked_list* list, t_node** head_pointer) {
+    t_node* sorted = NULL;
+    t_node* current = *head_pointer;
+
+    while (current != NULL) {
+        t_node* next = current->next;
+        sorted = sorted_insert(sorted, current);
+        current = next;
+    }
+    
+    *head_pointer = sorted;
+    list->tail = update_tail(*head_pointer);
+}
+
 int main(int argc, char const *argv[])
 {
     t_linked_list* list = create_list();
-    append(list, 10);
     append(list, 20);
+    append(list, 10);
+    append(list, 40);
+    append(list, 10);
     append(list, 30);
-    append(list, 20);
-    append(list, 10);
 
 
     printf("Lista Original: ");
     print_linked_list(list, list->head);
     
-    remove_duplicates(list);
+    insertion_sort(list, &list->head);
 
-    printf("Lista sem Duplicatas: ");
+    printf("Lista Ordenada: ");
     print_linked_list(list, list->head);
 
     return 0;

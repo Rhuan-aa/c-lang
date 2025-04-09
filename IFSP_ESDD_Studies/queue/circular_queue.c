@@ -18,15 +18,25 @@ t_queue* create(int size) {
 }
 
 int is_empty(t_queue* queue) {
-    return queue->end == -1;
-}
-
-int is_full(t_queue* queue) {
-    return queue->end == queue->size-1;
+    return queue->end-queue->start == 0;
 }
 
 int size(t_queue* queue) {
-    return queue->end+1;
+    if (is_empty(queue)) {
+        return 0;
+    }
+    
+    int index = 1;
+
+    for (int i = queue->start; i != queue->end; i = (i+1)%queue->size) {
+        index++;
+    }
+
+    return index;
+}
+
+int is_full(t_queue* queue) {
+    return size(queue) == queue->size;
 }
 
 void in(t_queue* queue, int value) {
@@ -34,7 +44,8 @@ void in(t_queue* queue, int value) {
         return;
     }
     
-    queue->vector[++queue->end] = value;
+    queue->end = (queue->end+1) % queue->size;
+    queue->vector[queue->end] = value;
 }
 
 void out(t_queue* queue, int* value) {
@@ -43,14 +54,7 @@ void out(t_queue* queue, int* value) {
     }
     
     *value = queue->vector[queue->start];
-
-    if (size(queue) > 1) {
-        for (int i = 0; i < size(queue); i++){
-            queue->vector[i] = queue->vector[i+1];
-        }
-    }
-
-    queue->end--;
+    queue->start = (queue->start+1) % queue->size;
 }
 
 void print_queue(t_queue* queue) {
@@ -58,7 +62,7 @@ void print_queue(t_queue* queue) {
         return;
     }
     
-    for (int i = 0; i < size(queue); i++) {
+    for (int i = queue->start; i != queue->end; i = (i+1)%queue->size) {
         printf("%d ", queue->vector[i]);
     }
     printf("\n");

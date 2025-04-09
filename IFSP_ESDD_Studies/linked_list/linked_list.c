@@ -191,35 +191,6 @@ void remove_item(t_linked_list* list, int item) {
     list->size--;
 }
 
-void reverse(t_linked_list* list)
-{
-    if (is_empty(list) || size(list) == 1) return;
-    
-    t_node* node_left = list->head;
-    t_node* node_right = list->tail;
-
-    for (int i = 0; i < size(list)/2; i++)
-    {
-        swap(list, node_left, node_right);
-
-        t_node* aux_node = list->head;
-        for (int j = 0; j < size(list)- i - 2; j++)
-        {
-            aux_node = aux_node->next;
-        }
-
-        node_left = node_left->next;
-        node_right = aux_node;
-    }
-}
-
-void swap(t_linked_list* list, t_node* node_left, t_node* node_right)
-{
-    t_node* aux = node_left->item;
-    node_left->item = node_right->item;
-    node_right->item = aux;
-}
-
 void print_list(t_linked_list* list)
 {
     t_node* indicator = list->head;
@@ -261,15 +232,35 @@ void clone(t_linked_list* src, t_linked_list* dest)
 
 }
 
-void sort(t_linked_list* list)
-{
+t_node* sorted_insert(t_node* sorted, t_node* node) {
+    if (sorted == NULL || node->item < sorted->item) {
+        node->next = sorted;
+        return node;
+    }
     
+    t_node* current = sorted;
+    while (current->next != NULL && current->next->item < node->item) {
+        current = current->next;
+    }
+
+    node->next = current->next;
+    current->next = node;
+    return sorted;
 }
 
-int merge(t_linked_list* list_one, t_linked_list* list_two)
-{
-   
+void insertion_sort(t_node** head_pointer) {
+    t_node* sorted = NULL;
+    t_node* current = *head_pointer;
+
+    while (current != NULL) {
+        t_node* next = current->next;
+        sorted = sorted_insert(sorted, current);
+        current = next;
+    }
+    
+    *head_pointer = sorted;
 }
+
 
 void destroy(t_linked_list* list) 
 {   

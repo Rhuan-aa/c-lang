@@ -1,71 +1,111 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct 
-{
-    int max;
-    int top_index;
-    int* vet;
+typedef struct {
+    int size;
+    int stack_top;
+    int* vector;
 } t_stack;
 
-
-t_stack* create_stack(int max)
-{
+t_stack* create(int size){
     t_stack* stack = (t_stack*) malloc(sizeof(t_stack));
-    
-    stack->max = max;
-    stack->top_index = -1;
-    stack->vet = (int*) malloc(sizeof(int) * max);
+    stack->vector = (int*) malloc(sizeof(int) * size);
+    stack->size = size;
+    stack->stack_top = -1;
     
     return stack;
 }
 
-int is_full(t_stack* stack) 
-{
-    return stack->top_index >= stack->max-1;
+int is_empty(t_stack* stack) {
+    return stack->stack_top == -1;
 }
 
-int is_empty(t_stack* stack) 
-{
-    return stack->top_index <= -1;
+int is_full(t_stack* stack) {
+    return stack->stack_top == stack->size - 1;
 }
 
-int push(t_stack* stack, int element)
-{
-    if (is_full(stack)) return 0;
-
-    stack->vet[++stack->top_index] = element;
+void push(t_stack* stack, int value) {
+    if (is_full(stack)) {
+        printf("A pilha esta cheia! ");
+        return;
+    }
     
-    return 1;
+    stack->vector[++stack->stack_top] = value;
 }
 
-int pop(t_stack* stack, int* element)
-{
-    if (is_empty(stack)) return 0;
+void pop(t_stack* stack, int* value) {
+    if (is_empty(stack)) {
+        printf("A pilha esta vazia! ");
+        return;
+    }
     
-    *element = stack->vet[stack->top_index--];
-
-    return 1;
+    *value = stack->vector[stack->stack_top--];
 }
 
-int top(t_stack* stack, int* element) 
-{
-    if (is_empty(stack)) return 0;
-
-    *element = stack->vet[stack->top_index];
-
-    return 1;
+void top(t_stack* stack, int* value) {
+    if (is_empty(stack)) {
+        printf("A pilha esta vazia! ");
+        return;
+    }
+    
+    *value = stack->vector[stack->stack_top];
 }
 
-void destroy(t_stack* stack) 
-{
-    free(stack->vet);
+void print_stack(t_stack* stack) {
+    if (is_empty(stack)) {
+        return;
+    }
+    
+    for (int i = 0; i <= stack->stack_top; i++)
+    {
+        printf("%d ", stack->vector[i]);
+    }
+    printf("\n");
+}
+
+void clear(t_stack* stack) {
+    stack->stack_top = -1;
+}
+
+void destroy(t_stack* stack) {
+    free(stack->vector);
     free(stack);
 }
 
+int main(int argc, char const *argv[]) {
+    t_stack* stack = create(10);
+    push(stack, 10);
+    push(stack, 20);
+    push(stack, 30);
+    push(stack, 40);
+    push(stack, 50);
+    push(stack, 60);
+    push(stack, 70);
+    push(stack, 80);
+    push(stack, 90);
+    push(stack, 100);
 
-int main(int argc, char const *argv[])
-{
-    
+    printf("Stack Original: \n");
+    print_stack(stack);
+
+    int value = 0;
+    pop(stack, &value);
+    printf("Poped Value = %d \n", value);
+
+    printf("Stack apos Pop: \n");
+    print_stack(stack);
+
+    int value2 = 0;
+    top(stack, &value2);
+    printf("Top Value = %d \n", value2);
+
+    clear(stack);
+    push(stack, 12);
+
+    printf("Stack apos Clear: \n");
+    print_stack(stack);
+
+    destroy(stack);
+
     return 0;
 }
