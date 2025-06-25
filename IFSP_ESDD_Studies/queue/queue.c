@@ -15,6 +15,7 @@ t_queue* create(int size) {
     queue->size = size;
     queue->start = 0;
     queue->end = -1;
+    return queue;
 }
 
 int is_empty(t_queue* queue) {
@@ -41,15 +42,12 @@ void out(t_queue* queue, int* value) {
     if (is_empty(queue)) {
         return;
     }
-    
     *value = queue->vector[queue->start];
-
     if (size(queue) > 1) {
-        for (int i = 0; i < size(queue); i++){
+        for (int i = 0; i < size(queue) - 1; i++){
             queue->vector[i] = queue->vector[i+1];
         }
     }
-
     queue->end--;
 }
 
@@ -63,6 +61,11 @@ void print_queue(t_queue* queue) {
     }
     printf("\n");
 
+}
+
+void destroy(t_queue* queue) {
+    free(queue->vector);
+    free(queue);
 }
 
 int main(int argc, char const *argv[])

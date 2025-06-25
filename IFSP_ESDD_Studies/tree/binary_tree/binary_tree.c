@@ -89,14 +89,25 @@ void destroy_nodes(t_node* node){
     }
 }
 
+int count_leafs(t_node* node) {
+    if (node == NULL)
+        return 0;
+    if (node->left == NULL && node->right == NULL)
+        return 1;
+    return count_leafs(node->left) + count_leafs(node->right);
+}
+
 void destroy_tree(t_binary_tree* tree){
     if (tree != NULL) {
         destroy_nodes(tree->root);
     }
     
     free(tree);
-
 }
+
+/*
+in_level -> FIFO (Fila)
+*/
 
 int main(int argc, char const *argv[]) {
     t_binary_tree*tree = create_tree();
@@ -134,7 +145,9 @@ int main(int argc, char const *argv[]) {
     printf("\n");
     post_order(tree->root);
 
-    printf("%d", tree_height(tree));
+    printf("\n%d", tree_height(tree));
+    printf("\n%d", count_leafs(tree->root));
 
+    destroy_tree(tree);
     return 0;
 }
